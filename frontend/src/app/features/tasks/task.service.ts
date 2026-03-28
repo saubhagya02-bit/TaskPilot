@@ -1,5 +1,5 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
@@ -13,6 +13,10 @@ export class TaskService {
 
   addTask(task: any) {
     return this.http.post(this.API, task);
+  }
+
+  updateTask(id: number, task: any) {
+    return this.http.put(`${this.API}/${id}`, task);
   }
 
   deleteTask(id: number) {
