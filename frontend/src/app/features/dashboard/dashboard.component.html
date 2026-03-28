@@ -1,0 +1,23 @@
+<div class="dashboard">
+  <div class="profile">
+    <img [src]="userPhoto || 'assets/avatar.png'" (click)="fileInput.click()" />
+    <input type="file" #fileInput (change)="onPhotoSelected($event)" hidden />
+
+    <span>Welcome, {{ userName }}</span>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <ul>
+        <li>🌞 My Day</li>
+        <li>📒 To-Do</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <div class="content-right">
+        <img src="Dashboard.png" alt="Illustration" />
+      </div>
+    </div>
+  </div>
+</div>

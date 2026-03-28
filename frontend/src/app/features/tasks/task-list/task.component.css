@@ -1,0 +1,24 @@
+h2 {
+  text-align: center;
+}
+
+.task-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 8px;
+  flex: 1;
+}
+
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: gray;
+}

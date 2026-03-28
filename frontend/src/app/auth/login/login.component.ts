@@ -32,9 +32,12 @@ export class LoginComponent {
       next: (res: any) => {
         this.auth.saveToken(res.token);
 
+        localStorage.setItem('userName', res.user.name);
+        localStorage.setItem('userPhoto', res.user.photo || '');
+
         this.toastr.success('Login successful 🎉');
 
-        this.router.navigate(['/tasks']);
+        this.router.navigate(['/dashboard']);
       },
 
       error: (err) => {
