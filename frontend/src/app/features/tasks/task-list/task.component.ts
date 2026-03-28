@@ -13,6 +13,7 @@ import { TaskService } from '../task.service';
 export class TaskComponent implements OnInit {
   tasks: any[] = [];
   newTask = '';
+  taskDate = '';
 
   editingIndex: number | null = null;
   editedTask = '';
@@ -26,6 +27,7 @@ export class TaskComponent implements OnInit {
   // Load tasks from backend
   loadTasks() {
     this.taskService.getTasks().subscribe((res: any) => {
+      console.log(res);
       this.tasks = res;
     });
   }
@@ -33,9 +35,15 @@ export class TaskComponent implements OnInit {
   // Add a new task
   addTask() {
     if (this.newTask.trim()) {
-      const task = { title: this.newTask, completed: false };
+      const task = {
+        title: this.newTask,
+        completed: false,
+        date: this.taskDate,
+      };
+
       this.taskService.addTask(task).subscribe(() => {
         this.newTask = '';
+        this.taskDate = '';
         this.loadTasks();
       });
     }

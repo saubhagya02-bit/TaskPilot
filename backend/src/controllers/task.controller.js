@@ -1,14 +1,26 @@
 const db = require("../config/db");
 
-exports.getTask = async (req, res) => {
-  const [rows] = await db.query("SELECT * FROM tasks");
-  res.json(rows);
-};
+exports.getTask = (req, res) => {
+  const sql = "SELECT id, title, completed, date FROM tasks";
 
-exports.createTask = async (req, res) => {
-  const { title } = req.body;
-  await db.query("INSERT INTO tasks (title) VALUES (?)", [title]);
-  res.json({ message: "Task created" });
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).send(err);
+
+    res.json(result);
+  });
+};
+exports.createTask = (req, res) => {
+  const { title, completed, date } = req.body;
+
+  const sql = "INSERT INTO tasks (title, completed, date) VALUES (?, ?, ?)";
+
+  db.query(sql, [title, completed, date], (err, result) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+
+    res.json({ message: "Task created" });
+  });
 };
 
 exports.updateTask = (req, res) => {
