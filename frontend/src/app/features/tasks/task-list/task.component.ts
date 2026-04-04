@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../task.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-task',
@@ -17,6 +18,7 @@ export class TaskComponent implements OnInit {
 
   editingIndex: number | null = null;
   editedTask = '';
+  http: any;
 
   constructor(private taskService: TaskService) {}
 
@@ -47,6 +49,12 @@ export class TaskComponent implements OnInit {
         this.loadTasks();
       });
     }
+  }
+
+  getTasks() {
+    const token = localStorage.getItem('token'); // or wherever you store JWT
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get('http://localhost:5000/api/tasks', { headers });
   }
 
   // Delete task by ID

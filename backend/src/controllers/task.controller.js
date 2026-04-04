@@ -1,27 +1,26 @@
-const db = require("../config/db.js");
+import db from "../config/db.js";
 
 // Get all tasks
-exports.getTask = async (req, res) => {
+export const getTasks = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT id, title, completed, date FROM tasks"
-    );
-
-    res.json(rows);
+    const userId = req.user.id;
+    const [tasks] = await db.query('SELECT * FROM tasks WHERE user_id = ?', [userId]);
+    res.json(tasks);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 // Create task
-exports.createTask = async (req, res) => {
+export const createTask = async (req, res) => {
   try {
     const { title, completed, date } = req.body;
+    const userId = req.user.id; 
 
     await db.query(
-      "INSERT INTO tasks (title, completed, date) VALUES (?, ?, ?)",
-      [title, completed, date]
+      "INSERT INTO tasks (title, completed, date, user_id) VALUES (?, ?, ?, ?)",
+      [title, completed, date, userId] 
     );
 
     res.json({ message: "Task created" });
@@ -30,8 +29,9 @@ exports.createTask = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 // Update task
-exports.updateTask = async (req, res) => {
+export const updateTask = async (req, res) => {
   try {
     const id = req.params.id;
     const { title, completed } = req.body;
@@ -49,7 +49,7 @@ exports.updateTask = async (req, res) => {
 };
 
 // Delete task
-exports.deleteTask = async (req, res) => {
+export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
