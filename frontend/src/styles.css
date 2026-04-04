@@ -81,3 +81,56 @@ body {
 .auth-card a:hover {
   text-decoration: underline;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-card {
+    width: 90%;
+    padding: 30px;
+  }
+
+  .auth-card h2 {
+    font-size: 22px;
+  }
+
+  .auth-card input {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .auth-card button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 15px;
+  }
+
+  .auth-card {
+    width: 100%;
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+
+  .auth-card h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .auth-card input {
+    font-size: 12px;
+    padding: 9px;
+  }
+
+  .auth-card button {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .auth-card p {
+    font-size: 12px;
+  }
+}

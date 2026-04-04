@@ -1,0 +1,19 @@
+<div class="layout">
+  <div class="sidebar">
+    <div class="profile">
+      <img [src]="userPhoto || 'avatar.png'" (click)="fileInput.click()" />
+      <input type="file" #fileInput (change)="onPhotoSelected($event)" hidden />
+
+      <span>Welcome, {{ userName }}</span>
+    </div>
+
+    <ul>
+        <div class="task-card" (click)="goToTasks()" class="task-card">🌞 My Day</div>
+        <div class="task-card" (click)="goToTasks()" class="task-card">📒 To-Do</div>
+      </ul>
+  </div>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+/* Main layout */
+.layout {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #1e293b; /* dark blue */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* Profile section */
+.profile {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #38bdf8;
+  object-fit: cover;
+}
+
+.profile span {
+  display: block;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Menu items */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Fix duplicate class issue */
+.task-card {
+  background: #334155;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.task-card:hover {
+  background: #38bdf8;
+  color: #000;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  background: #f1f5f9;
+  padding: 20px;
+  overflow-y: auto;
+}

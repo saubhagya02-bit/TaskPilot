@@ -1,46 +1,63 @@
-const db = require("../config/db");
+const db = require("../config/db.js");
 
-exports.getTask = (req, res) => {
-  const sql = "SELECT id, title, completed, date FROM tasks";
+// Get all tasks
+exports.getTask = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, title, completed, date FROM tasks"
+    );
 
-  db.query(sql, (err, result) => {
-    if (err) return res.status(500).send(err);
-
-    res.json(result);
-  });
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
-exports.createTask = (req, res) => {
-  const { title, completed, date } = req.body;
 
-  const sql = "INSERT INTO tasks (title, completed, date) VALUES (?, ?, ?)";
+// Create task
+exports.createTask = async (req, res) => {
+  try {
+    const { title, completed, date } = req.body;
 
-  db.query(sql, [title, completed, date], (err, result) => {
-    if (err) {
-      return res.status(500).send(err);
-    }
+    await db.query(
+      "INSERT INTO tasks (title, completed, date) VALUES (?, ?, ?)",
+      [title, completed, date]
+    );
 
     res.json({ message: "Task created" });
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+// Update task
+exports.updateTask = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { title, completed } = req.body;
 
-exports.updateTask = (req, res) => {
-  const id = req.params.id;
-  const { title, completed } = req.body;
-
-  const sql = "UPDATE tasks SET title = ?, completed = ? WHERE id = ?";
-
-  db.query(sql, [title, completed, id], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send(err);
-    }
+    await db.query(
+      "UPDATE tasks SET title = ?, completed = ? WHERE id = ?",
+      [title, completed, id]
+    );
 
     res.json({ message: "Task updated successfully" });
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
+// Delete task
 exports.deleteTask = async (req, res) => {
-  const { id } = req.params;
-  await db.query("DELETE FROM tasks WHERE id=?", [id]);
-  res.json({ message: "Task deleted" });
+  try {
+    const { id } = req.params;
+
+    await db.query("DELETE FROM tasks WHERE id = ?", [id]);
+
+    res.json({ message: "Task deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };

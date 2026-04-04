@@ -114,4 +114,35 @@
   color: white;
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
 
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+  }
+
+  .sidebar ul {
+    display: none; /* Hide sidebar links on mobile */
+  }
+
+  .sidebar .profile {
+    display: none; /* Optionally hide profile info on mobile */
+  }
+
+  .sidebar .task-card {
+    display: inline-block;
+    margin: 0 5px;
+  }
+
+  .content {
+    padding: 15px;
+  }
+}

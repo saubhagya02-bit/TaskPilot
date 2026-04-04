@@ -1,19 +1,5 @@
 <div class="dashboard">
-  <div class="profile">
-    <img [src]="userPhoto || 'avatar.png'" (click)="fileInput.click()" />
-    <input type="file" #fileInput (change)="onPhotoSelected($event)" hidden />
-
-    <span>Welcome, {{ userName }}</span>
-  </div>
-
   <div class="main-container">
-    <div class="sidebar">
-      <ul>
-        <div class="task-card" (click)="goToTasks()" class="task-card">🌞 My Day</div>
-        <div class="task-card" (click)="goToTasks()" class="task-card">📒 To-Do</div>
-      </ul>
-    </div>
-
     <div class="content">
       <div class="content-right">
         <img src="Dashboard.png" alt="Illustration" />
