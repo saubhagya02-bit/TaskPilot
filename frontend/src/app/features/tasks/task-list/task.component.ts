@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../task.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-task',
@@ -15,10 +14,11 @@ export class TaskComponent implements OnInit {
   tasks: any[] = [];
   newTask = '';
   taskDate = '';
-
   editingIndex: number | null = null;
   editedTask = '';
-  http: any;
+  editedDate = '';
+  loading = true;
+  error = '';
 
   constructor(private taskService: TaskService) {}
 
@@ -26,69 +26,80 @@ export class TaskComponent implements OnInit {
     this.loadTasks();
   }
 
-  // Load tasks from backend
-  loadTasks() {
-    this.taskService.getTasks().subscribe((res: any) => {
-      console.log(res);
-      this.tasks = res;
+  loadTasks(): void {
+    this.loading = true;
+    this.error = '';
+    this.taskService.getTasks().subscribe({
+      next: (res: any[]) => {
+        this.tasks = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Failed to load tasks.';
+        this.loading = false;
+      },
     });
   }
 
-  // Add a new task
-  addTask() {
-    if (this.newTask.trim()) {
-      const task = {
-        title: this.newTask,
-        completed: false,
-        date: this.taskDate,
-      };
-
-      this.taskService.addTask(task).subscribe(() => {
+  addTask(): void {
+    if (!this.newTask.trim()) return;
+    const task = { title: this.newTask.trim(), completed: false, date: this.taskDate };
+    this.taskService.addTask(task).subscribe({
+      next: () => {
         this.newTask = '';
         this.taskDate = '';
         this.loadTasks();
-      });
-    }
-  }
-
-  getTasks() {
-    const token = localStorage.getItem('token'); // or wherever you store JWT
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get('http://localhost:5000/api/tasks', { headers });
-  }
-
-  // Delete task by ID
-  deleteTask(taskId: number) {
-    this.taskService.deleteTask(taskId).subscribe(() => {
-      this.loadTasks();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Failed to add task.';
+      },
     });
   }
 
-  // Start editing a task
-  startEdit(index: number) {
+  deleteTask(taskId: number): void {
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => this.loadTasks(),
+      error: (err) => {
+        this.error = err?.error?.message || 'Failed to delete task.';
+      },
+    });
+  }
+
+  startEdit(index: number): void {
     this.editingIndex = index;
     this.editedTask = this.tasks[index].title;
+    this.editedDate = this.tasks[index].date || '';
   }
 
-  // Save edited task
-  saveEdit(index: number) {
-    if (this.editedTask.trim()) {
-      const task = { ...this.tasks[index], title: this.editedTask };
-      this.taskService.updateTask(task.id, task).subscribe(() => {
+  // Accepts the full task object — no index lookup needed
+  saveEdit(task: any): void {
+    if (!this.editedTask.trim()) return;
+    const updated = { ...task, title: this.editedTask.trim(), date: this.editedDate };
+    this.taskService.updateTask(task.id, updated).subscribe({
+      next: () => {
         this.editingIndex = null;
         this.loadTasks();
-      });
-    }
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Failed to update task.';
+      },
+    });
   }
 
-  cancelEdit() {
+  cancelEdit(): void {
     this.editingIndex = null;
   }
 
-  toggleTask(index: number) {
-    const task = { ...this.tasks[index], completed: !this.tasks[index].completed };
-    this.taskService.updateTask(task.id, task).subscribe(() => {
-      this.loadTasks();
+  // Accepts the full task object — no index lookup needed
+  toggleTask(task: any): void {
+    const updated = { ...task, completed: !task.completed };
+    this.taskService.updateTask(task.id, updated).subscribe({
+      next: () => {
+        task.completed = !task.completed;
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Failed to update task.';
+      },
     });
   }
 }

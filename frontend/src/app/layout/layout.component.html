@@ -1,19 +1,41 @@
 <div class="layout">
-  <div class="sidebar">
-    <div class="profile">
-      <img [src]="userPhoto || 'avatar.png'" (click)="fileInput.click()" />
-      <input type="file" #fileInput (change)="onPhotoSelected($event)" hidden />
-
-      <span>Welcome, {{ userName }}</span>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">✓</div>
+      <span class="brand-name">TaskPilot</span>
     </div>
 
-    <ul>
-        <div class="task-card" (click)="goToTasks()" class="task-card">🌞 My Day</div>
-        <div class="task-card" (click)="goToTasks()" class="task-card">📒 To-Do</div>
-      </ul>
-  </div>
+    <div class="profile">
+      <div class="avatar-wrap" (click)="fileInput.click()" title="Change photo">
+        <img [src]="userPhoto" alt="Profile photo" class="avatar-img" />
+        <div class="avatar-overlay">
+          <span class="camera-icon">📷</span>
+        </div>
+      </div>
+      <input type="file" #fileInput accept="image/*" (change)="onPhotoSelected($event)" hidden />
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-sub">Personal workspace</span>
+      </div>
+    </div>
 
-  <div class="content">
+    <nav class="nav">
+      <a class="nav-item" [class.active]="activeRoute === 'dashboard'" (click)="navigate('dashboard')">
+        <span class="nav-icon">☀️</span>
+        <span>My Day</span>
+      </a>
+      <a class="nav-item" [class.active]="activeRoute === 'tasks'" (click)="navigate('tasks')">
+        <span class="nav-icon">📋</span>
+        <span>To-Do</span>
+      </a>
+    </nav>
+
+    <button class="logout-btn" (click)="logout()">
+      <span>⬅</span> Sign out
+    </button>
+  </aside>
+
+  <main class="content">
     <router-outlet></router-outlet>
-  </div>
+  </main>
 </div>
