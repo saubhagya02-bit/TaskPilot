@@ -1,9 +1,63 @@
-<div class="dashboard">
-  <div class="main-container">
-    <div class="content">
-      <div class="content-right">
-        <img src="Dashboard.png" alt="Illustration" />
-      </div>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">☀️ My Day</h1>
+      <p class="page-sub">{{ today | date: 'EEEE, MMMM d' }}</p>
+    </div>
+    <div class="greeting">
+      Good {{ getGreeting() }}, <strong>{{ userName }}</strong>
+    </div>
+  </header>
+
+  <div class="toggle-row">
+    <button class="toggle-btn" [class.active]="!showAll" (click)="showAll = false">Today</button>
+    <button class="toggle-btn" [class.active]="showAll" (click)="showAll = true">All Tasks</button>
+  </div>
+
+  <div class="progress-card" *ngIf="displayedTasks.length > 0">
+    <div class="progress-label">
+      <span>{{ completedCount }} of {{ displayedTasks.length }} tasks done</span>
+      <span class="progress-pct">{{ progressPercent }}%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="progressPercent"></div>
     </div>
   </div>
+
+  <div class="state-box" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your day...</p>
+  </div>
+
+  <div class="state-box error-box" *ngIf="error && !loading">
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !error && displayedTasks.length === 0 && !showAll">
+    <div class="empty-icon">🌿</div>
+    <p class="empty-title">Nothing scheduled for today</p>
+    <p class="empty-sub">
+      Go to <strong>To-Do</strong>, add a task and set today's date — it will appear here.
+    </p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !error && displayedTasks.length === 0 && showAll">
+    <div class="empty-icon">✨</div>
+    <p class="empty-title">No tasks yet</p>
+    <p class="empty-sub">Head to To-Do to add your first task.</p>
+  </div>
+
+  <ul class="task-list" *ngIf="!loading && displayedTasks.length > 0">
+    <li *ngFor="let task of displayedTasks" class="task-item" [class.done]="task.completed">
+      <div class="task-row">
+        <div class="custom-check" [class.checked]="task.completed" (click)="toggleTask(task)">
+          <span *ngIf="task.completed" class="check-mark">✓</span>
+        </div>
+        <div class="task-body">
+          <span class="task-title">{{ task.title }}</span>
+          <span class="task-date" *ngIf="task.date">{{ getLocalDate(task.date) }}</span>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>

@@ -13,8 +13,10 @@ export class DashboardComponent implements OnInit {
   today = new Date();
   userName = '';
   todayTasks: any[] = [];
+  allTasks: any[] = [];
   loading = true;
   error = '';
+  showAll = false;
 
   constructor(private taskService: TaskService) {}
 
@@ -24,11 +26,23 @@ export class DashboardComponent implements OnInit {
     this.loadTodayTasks();
   }
 
+  private toLocalDateStr(value: any): string {
+    if (!value) return '';
+    const d = new Date(value);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  private getTodayStr(): string {
+    return this.toLocalDateStr(new Date());
+  }
+
   loadTodayTasks(): void {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = this.getTodayStr();
+
     this.taskService.getTasks().subscribe({
       next: (tasks: any[]) => {
-        this.todayTasks = tasks.filter(t => t.date === todayStr);
+        this.allTasks = tasks;
+        this.todayTasks = tasks.filter(t => this.toLocalDateStr(t.date) === todayStr);
         this.loading = false;
       },
       error: (err) => {
@@ -47,13 +61,21 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  getLocalDate(value: any): string {
+    return this.toLocalDateStr(value);
+  }
+
+  get displayedTasks(): any[] {
+    return this.showAll ? this.allTasks : this.todayTasks;
+  }
+
   get completedCount(): number {
-    return this.todayTasks.filter(t => t.completed).length;
+    return this.displayedTasks.filter(t => t.completed).length;
   }
 
   get progressPercent(): number {
-    if (!this.todayTasks.length) return 0;
-    return Math.round((this.completedCount / this.todayTasks.length) * 100);
+    if (!this.displayedTasks.length) return 0;
+    return Math.round((this.completedCount / this.displayedTasks.length) * 100);
   }
 
   getGreeting(): string {
