@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TaskService } from '../task.service';
+import { TaskService, Task } from '../task.service';
+
+function todayStr(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 @Component({
   selector: 'app-task',
@@ -11,9 +16,11 @@ import { TaskService } from '../task.service';
   styleUrls: ['./task.component.css'],
 })
 export class TaskComponent implements OnInit {
-  tasks: any[] = [];
+  tasks: Task[] = [];
   newTask = '';
-  taskDate = '';
+  // Defaults to today so a task the user adds without touching the date
+  // picker still shows up in the dashboard's "Today" view.
+  taskDate = todayStr();
   editingIndex: number | null = null;
   editedTask = '';
   editedDate = '';
@@ -30,7 +37,7 @@ export class TaskComponent implements OnInit {
     this.loading = true;
     this.error = '';
     this.taskService.getTasks().subscribe({
-      next: (res: any[]) => {
+      next: (res) => {
         this.tasks = res;
         this.loading = false;
       },
@@ -47,7 +54,7 @@ export class TaskComponent implements OnInit {
     this.taskService.addTask(task).subscribe({
       next: () => {
         this.newTask = '';
-        this.taskDate = '';
+        this.taskDate = todayStr();
         this.loadTasks();
       },
       error: (err) => {
@@ -71,8 +78,7 @@ export class TaskComponent implements OnInit {
     this.editedDate = this.tasks[index].date || '';
   }
 
-  // Accepts the full task object — no index lookup needed
-  saveEdit(task: any): void {
+  saveEdit(task: Task): void {
     if (!this.editedTask.trim()) return;
     const updated = { ...task, title: this.editedTask.trim(), date: this.editedDate };
     this.taskService.updateTask(task.id, updated).subscribe({
@@ -90,8 +96,7 @@ export class TaskComponent implements OnInit {
     this.editingIndex = null;
   }
 
-  // Accepts the full task object — no index lookup needed
-  toggleTask(task: any): void {
+  toggleTask(task: Task): void {
     const updated = { ...task, completed: !task.completed };
     this.taskService.updateTask(task.id, updated).subscribe({
       next: () => {
