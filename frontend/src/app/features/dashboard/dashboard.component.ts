@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskService } from '../tasks/task.service';
+import { TaskService, Task } from '../tasks/task.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,8 +12,8 @@ import { TaskService } from '../tasks/task.service';
 export class DashboardComponent implements OnInit {
   today = new Date();
   userName = '';
-  todayTasks: any[] = [];
-  allTasks: any[] = [];
+  todayTasks: Task[] = [];
+  allTasks: Task[] = [];
   loading = true;
   error = '';
   showAll = false;
@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
     this.taskService.getTasks().subscribe({
       next: (tasks: any[]) => {
         this.allTasks = tasks;
-        this.todayTasks = tasks.filter(t => this.toLocalDateStr(t.date) === todayStr);
+        this.todayTasks = tasks.filter((t) => this.toLocalDateStr(t.date) === todayStr);
         this.loading = false;
       },
       error: (err) => {
@@ -56,7 +56,9 @@ export class DashboardComponent implements OnInit {
   toggleTask(task: any): void {
     const updated = { ...task, completed: !task.completed };
     this.taskService.updateTask(task.id, updated).subscribe({
-      next: () => { task.completed = !task.completed; },
+      next: () => {
+        task.completed = !task.completed;
+      },
       error: (err) => console.error('Toggle failed', err),
     });
   }
@@ -70,7 +72,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get completedCount(): number {
-    return this.displayedTasks.filter(t => t.completed).length;
+    return this.displayedTasks.filter((t) => t.completed).length;
   }
 
   get progressPercent(): number {
