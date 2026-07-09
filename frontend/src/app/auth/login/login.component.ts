@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
@@ -15,38 +14,40 @@ import { ToastrService } from 'ngx-toastr';
 export class LoginComponent {
   email = '';
   password = '';
+  loading = false;
 
   constructor(
-    private http: HttpClient,
     private auth: AuthService,
     private router: Router,
     private toastr: ToastrService,
   ) {}
 
   login() {
-    this.http
-      .post('http://localhost:5000/api/auth/login', {
-        email: this.email,
-        password: this.password,
-      })
-      .subscribe({
-        next: (res: any) => {
-          this.auth.saveToken(res.token);
+    if (!this.email || !this.password) {
+      this.toastr.error('Please enter your email and password');
+      return;
+    }
+    this.loading = true;
 
-          const user = {
-            name: res.user.name || res.user?.username || 'User',
-            photo: res.user?.photo || 'avatar.png',
-          };
-          localStorage.setItem('user', JSON.stringify(user));
-          this.toastr.success('Login successful 🎉');
-          this.router.navigate(['/dashboard']);
-        },
+    this.auth.login({ email: this.email, password: this.password }).subscribe({
+      next: (res) => {
+        this.auth.saveToken(res.token);
 
-        error: (err) => {
-          console.error(err);
+        const user = {
+          name: res.user?.name || 'User',
+          photo: 'avatar.png',
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+        this.toastr.success('Login successful 🎉');
+        this.router.navigate(['/dashboard']);
+      },
 
-          this.toastr.error(err?.error?.message || 'Login failed ❌');
-        },
-      });
+      error: (err) => {
+        this.loading = false;
+        console.error(err);
+
+        this.toastr.error(err?.error?.message || 'Login failed ❌');
+      },
+    });
   }
 }
