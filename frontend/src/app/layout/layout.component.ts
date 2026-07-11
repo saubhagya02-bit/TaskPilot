@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/auth.service';
 import { filter } from 'rxjs/operators';
@@ -7,33 +7,23 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css'],
 })
 export class LayoutComponent implements OnInit {
   userName = '';
   userPhoto = 'avatar.png';
-  activeRoute = 'dashboard';
 
-  constructor(private router: Router, private auth: AuthService) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+  ) {}
 
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.userName = user.name || 'User';
     this.userPhoto = user.photo || 'avatar.png';
-
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe((e: any) => {
-        const url: string = e.urlAfterRedirects;
-        this.activeRoute = url.includes('tasks') ? 'tasks' : 'dashboard';
-      });
-  }
-
-  navigate(path: string): void {
-    this.activeRoute = path;
-    this.router.navigate([`/${path}`]);
   }
 
   onPhotoSelected(event: any): void {
@@ -43,7 +33,6 @@ export class LayoutComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      // Warn if image is very large (> 500KB base64 ≈ 375KB raw)
       if (dataUrl.length > 500_000) {
         console.warn('Photo is large; consider compressing before uploading.');
       }
