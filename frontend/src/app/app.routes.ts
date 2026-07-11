@@ -5,12 +5,13 @@ import { TaskComponent } from './features/tasks/task-list/task.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './core/auth-guard';
+import { guestGuard } from './core/guest-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
 
   {
     path: '',
