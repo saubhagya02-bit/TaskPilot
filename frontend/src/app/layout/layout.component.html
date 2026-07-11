@@ -20,19 +20,17 @@
     </div>
 
     <nav class="nav">
-      <a class="nav-item" [class.active]="activeRoute === 'dashboard'" (click)="navigate('dashboard')">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
         <span class="nav-icon">☀️</span>
         <span>My Day</span>
       </a>
-      <a class="nav-item" [class.active]="activeRoute === 'tasks'" (click)="navigate('tasks')">
+      <a class="nav-item" routerLink="/tasks" routerLinkActive="active">
         <span class="nav-icon">📋</span>
         <span>To-Do</span>
       </a>
     </nav>
 
-    <button class="logout-btn" (click)="logout()">
-      <span>⬅</span> Sign out
-    </button>
+    <button class="logout-btn" (click)="logout()"><span>⬅</span> Sign out</button>
   </aside>
 
   <main class="content">
